@@ -1,11 +1,34 @@
-version: "3.9"
-
+version: '3.8'
 services:
   api:
-    # Add configuration here
+    build:
+      context: ./backend
+      dockerfile: deployment/Dockerfile
+    ports:
+      - "4001:4001"
+    environment:
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DATABASE: postgres
+      HTTP_PORT: 4001
 
   web:
-    # Add configuration here
+    build:
+      context: ./frontend
+      dockerfile: deployment/Dockerfile
+    ports:
+      - "80:80"
 
   database:
-    # Add configuration here
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

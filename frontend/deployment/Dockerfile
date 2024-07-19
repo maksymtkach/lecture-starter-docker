@@ -1,7 +1,9 @@
-FROM node:20-alpine as build
-
-# Add configuration here
-
-FROM nginx:1.22.1
-
-# Add configuration here
+FROM node:16-alpine as builder
+WORKDIR /app
+COPY . /app
+RUN npm install
+RUN npm run build
+FROM nginx:1.21-alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
